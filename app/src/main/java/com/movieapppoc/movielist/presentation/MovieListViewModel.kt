@@ -17,42 +17,43 @@ import javax.inject.Inject
 class MovieListViewModel @Inject constructor(
     private val movieListRepository: MovieListRepository
 ) : ViewModel() {
-    private var _movieListState = MutableStateFlow(MovieListState())
 
+    private var _movieListState = MutableStateFlow(MovieListState())
     val movieListState = _movieListState.asStateFlow()
 
     init {
-        println("xxx init block called")
         getPopularMovieList(false)
         getUpcomingMovieList(false)
     }
 
-    fun onEvent(events: MovieListUIEvents) {
-        when (events) {
+    fun onEvent(event: MovieListUIEvents) {
+        when (event) {
             MovieListUIEvents.Navigate -> {
                 _movieListState.update {
-                    it.copy(isCurrentPopularScreen = !movieListState.value.isCurrentPopularScreen)
-
+                    it.copy(
+                        isCurrentPopularScreen = !movieListState.value.isCurrentPopularScreen
+                    )
                 }
             }
 
             is MovieListUIEvents.Paginate -> {
-                if (events.category == Category.POPULAR) {
+                if (event.category == Category.POPULAR) {
                     getPopularMovieList(true)
-                } else if (events.category == Category.UPCOMING) {
+                } else if (event.category == Category.UPCOMING) {
                     getUpcomingMovieList(true)
                 }
             }
         }
     }
 
-    private fun getUpcomingMovieList(forceFetchFromRemote: Boolean) {
+    private fun getPopularMovieList(forceFetchFromRemote: Boolean) {
         viewModelScope.launch {
             _movieListState.update {
                 it.copy(isLoading = true)
             }
+
             movieListRepository.getMovieList(
-                forceFetchRemote = forceFetchFromRemote,
+                forceFetchFromRemote,
                 Category.POPULAR,
                 movieListState.value.popularMovieListPage
             ).collectLatest { result ->
@@ -67,8 +68,8 @@ class MovieListViewModel @Inject constructor(
                         result.data?.let { popularList ->
                             _movieListState.update {
                                 it.copy(
-                                    isLoading = false,
-                                    popularMovieList = movieListState.value.popularMovieList + popularList.shuffled(),
+                                    popularMovieList = movieListState.value.popularMovieList
+                                            + popularList.shuffled(),
                                     popularMovieListPage = movieListState.value.popularMovieListPage + 1
                                 )
                             }
@@ -81,19 +82,18 @@ class MovieListViewModel @Inject constructor(
                         }
                     }
                 }
-
             }
         }
-
     }
 
-    private fun getPopularMovieList(forceFetchFromRemote: Boolean) {
+    private fun getUpcomingMovieList(forceFetchFromRemote: Boolean) {
         viewModelScope.launch {
             _movieListState.update {
                 it.copy(isLoading = true)
             }
+
             movieListRepository.getMovieList(
-                forceFetchRemote = forceFetchFromRemote,
+                forceFetchFromRemote,
                 Category.UPCOMING,
                 movieListState.value.upcomingMovieListPage
             ).collectLatest { result ->
@@ -105,12 +105,11 @@ class MovieListViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        println("xxx getPopularMovieList block called ${result.data}")
                         result.data?.let { upcomingList ->
                             _movieListState.update {
                                 it.copy(
-                                    isLoading = false,
-                                    upcomingMovieList = movieListState.value.upcomingMovieList + upcomingList.shuffled(),
+                                    upcomingMovieList = movieListState.value.upcomingMovieList
+                                            + upcomingList.shuffled(),
                                     upcomingMovieListPage = movieListState.value.upcomingMovieListPage + 1
                                 )
                             }
@@ -123,10 +122,8 @@ class MovieListViewModel @Inject constructor(
                         }
                     }
                 }
-
             }
         }
-
-
     }
+
 }

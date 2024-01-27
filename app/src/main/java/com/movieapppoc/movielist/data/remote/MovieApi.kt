@@ -11,7 +11,7 @@ interface MovieApi {
     suspend fun getMoviesList(
         @Path("category") category: String,
         @Query("page") page: Int,
-        @Query("api_key") apiKey: String = API_KEY,
+        @Query("api_key") apiKey: String,
         ) : MovieListDto
 
     companion object {

@@ -1,4 +1,4 @@
-package com.movieapppoc.movielist.data.local.movie
+package com.movieapppoc.movielist.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

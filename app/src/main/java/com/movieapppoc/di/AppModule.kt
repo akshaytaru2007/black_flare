@@ -2,7 +2,8 @@ package com.movieapppoc.di
 
 import android.app.Application
 import androidx.room.Room
-import com.movieapppoc.movielist.data.local.movie.MovieDatabase
+import com.movieapppoc.movielist.data.local.MovieDao
+import com.movieapppoc.movielist.data.local.MovieDatabase
 import com.movieapppoc.movielist.data.remote.MovieApi
 import dagger.Module
 import dagger.Provides
@@ -12,7 +13,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -23,13 +23,13 @@ object AppModule {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val client : OkHttpClient = OkHttpClient.Builder()
+    private val client: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(interceptor)
         .build()
 
     @Singleton
     @Provides
-    fun providesMovieApi() : MovieApi {
+    fun providesMovieApi(): MovieApi {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(MovieApi.BASE_URL)
@@ -40,11 +40,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesMovieDatabase(app : Application): MovieDatabase {
+    fun providesMovieDatabase(app: Application): MovieDatabase {
         return Room.databaseBuilder(
             app,
             MovieDatabase::class.java,
             "moviesdb.db"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesMovieDao(movieDatabase: MovieDatabase): MovieDao {
+        return movieDatabase.movieDao
     }
 }

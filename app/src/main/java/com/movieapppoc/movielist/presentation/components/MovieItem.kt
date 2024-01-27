@@ -120,7 +120,7 @@ fun MovieItem(
 
             Text(
                 text = movie.title ?: "",
-                modifier = Modifier.padding(start = 26.dp, end = 8.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                 color = Color.White,
                 fontSize = 15.sp,
                 maxLines = 1

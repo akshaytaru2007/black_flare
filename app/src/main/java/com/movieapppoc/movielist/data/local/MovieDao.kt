@@ -1,8 +1,7 @@
-package com.movieapppoc.movielist.data.local.movie
+package com.movieapppoc.movielist.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Upsert
 
 @Dao

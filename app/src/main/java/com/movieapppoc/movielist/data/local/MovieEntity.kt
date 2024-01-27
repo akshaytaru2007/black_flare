@@ -1,4 +1,4 @@
-package com.movieapppoc.movielist.data.local.movie
+package com.movieapppoc.movielist.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

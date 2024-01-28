@@ -113,4 +113,7 @@ dependencies {
     // Mock webserver for Retrofit testing
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
+    // Flow testing
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
 }

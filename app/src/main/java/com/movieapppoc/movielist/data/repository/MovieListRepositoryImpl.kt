@@ -21,7 +21,7 @@ class MovieListRepositoryImpl @Inject constructor(
     private val movieLocalDataSource: MovieLocalDataSource,
     private val connectivityProvider: ConnectivityProvider
 ) : MovieListRepository {
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+
     override suspend fun getMovieList(
         category: String,
         page: Int

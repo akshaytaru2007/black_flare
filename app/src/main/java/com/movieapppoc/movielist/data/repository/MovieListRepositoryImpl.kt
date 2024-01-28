@@ -1,6 +1,5 @@
 package com.movieapppoc.movielist.data.repository
 
-import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.movieapppoc.movielist.data.local.MovieLocalDataSource
@@ -10,25 +9,27 @@ import com.movieapppoc.movielist.data.remote.MovieRemoteDataSource
 import com.movieapppoc.movielist.domain.model.Movie
 import com.movieapppoc.movielist.domain.repository.MovieListRepository
 import com.movieapppoc.movielist.util.Resource
+import com.movieapppoc.movielist.util.exceptions.ClientErrorException
+import com.movieapppoc.movielist.util.exceptions.ServerErrorException
+import com.movieapppoc.movielist.util.network.ConnectivityProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.io.IOException
 import javax.inject.Inject
 
 class MovieListRepositoryImpl @Inject constructor(
     private val movieRemoteDataSource: MovieRemoteDataSource,
-    private val movieLocalDataSource: MovieLocalDataSource
+    private val movieLocalDataSource: MovieLocalDataSource,
+    private val connectivityProvider: ConnectivityProvider
 ) : MovieListRepository {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun getMovieList(
-        forceFetchRemote: Boolean,
         category: String,
         page: Int
     ): Flow<Resource<List<Movie>>> {
         return flow {
             emit(Resource.Loading(true))
             val localMovieList = movieLocalDataSource.getMovieByCategory(category)
-            val shouldLoadLocalMovies = localMovieList?.isEmpty() == true && !forceFetchRemote
+            val shouldLoadLocalMovies = !connectivityProvider.isConnected()
             if (shouldLoadLocalMovies) {
                 emit(Resource.Success(
                     data = localMovieList!!.map { movieEntity ->
@@ -40,17 +41,12 @@ class MovieListRepositoryImpl @Inject constructor(
             }
             val movieListFromAPI = try {
                 movieRemoteDataSource.getMoviesList(category, page)
-            } catch (e: IOException) {
+            } catch (e: Throwable) {
                 e.printStackTrace()
-                emit(Resource.Error(message = "Error Loading movies"))
-                return@flow
-            } catch (e: HttpException) {
-                e.printStackTrace()
-                emit(Resource.Error(message = "Error Loading movies"))
-                return@flow
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emit(Resource.Error(message = "Error Loading movies"))
+                if (e is ServerErrorException || e is ClientErrorException)
+                    emit(Resource.Error(message = "Network Error"))
+                else
+                    emit(Resource.Error(message = "Error Loading movies"))
                 return@flow
             }
             val movieEntities = movieListFromAPI.results.let {

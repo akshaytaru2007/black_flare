@@ -22,8 +22,8 @@ class MovieListViewModel @Inject constructor(
     val movieListState = _movieListState.asStateFlow()
 
     init {
-        getPopularMovieList(false)
-        getUpcomingMovieList(false)
+        getPopularMovieList()
+        getUpcomingMovieList()
     }
 
     fun onEvent(event: MovieListUIEvents) {
@@ -38,22 +38,21 @@ class MovieListViewModel @Inject constructor(
 
             is MovieListUIEvents.Paginate -> {
                 if (event.category == Category.POPULAR) {
-                    getPopularMovieList(true)
+                    getPopularMovieList()
                 } else if (event.category == Category.UPCOMING) {
-                    getUpcomingMovieList(true)
+                    getUpcomingMovieList()
                 }
             }
         }
     }
 
-    private fun getPopularMovieList(forceFetchFromRemote: Boolean) {
+    private fun getPopularMovieList() {
         viewModelScope.launch {
             _movieListState.update {
                 it.copy(isLoading = true)
             }
 
             movieListRepository.getMovieList(
-                forceFetchFromRemote,
                 Category.POPULAR,
                 movieListState.value.popularMovieListPage
             ).collectLatest { result ->
@@ -86,14 +85,13 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    private fun getUpcomingMovieList(forceFetchFromRemote: Boolean) {
+    private fun getUpcomingMovieList() {
         viewModelScope.launch {
             _movieListState.update {
                 it.copy(isLoading = true)
             }
 
             movieListRepository.getMovieList(
-                forceFetchFromRemote,
                 Category.UPCOMING,
                 movieListState.value.upcomingMovieListPage
             ).collectLatest { result ->

@@ -1,10 +1,16 @@
 package com.movieapppoc.di
 
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.room.Room
 import com.movieapppoc.movielist.data.local.MovieDao
 import com.movieapppoc.movielist.data.local.MovieDatabase
 import com.movieapppoc.movielist.data.remote.MovieApi
+import com.movieapppoc.movielist.util.network.ConnectivityProvider
+import com.movieapppoc.movielist.util.network.ConnectivityProviderImpl
+import com.movieapppoc.movielist.util.network.HttpExceptionInterceptor
+import com.movieapppoc.movielist.util.network.HttpRetryInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +31,8 @@ object AppModule {
 
     private val client: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(interceptor)
+        .addInterceptor(HttpExceptionInterceptor())
+        .addInterceptor(HttpRetryInterceptor())
         .build()
 
     @Singleton
@@ -50,6 +58,13 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideConnectivityProvider(app: Application): ConnectivityProvider {
+        val connectivityManager =
+            app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return ConnectivityProviderImpl(connectivityManager)
+    }
+
+    @Provides
     fun providesMovieDao(movieDatabase: MovieDatabase): MovieDao {
         return movieDatabase.movieDao
     }

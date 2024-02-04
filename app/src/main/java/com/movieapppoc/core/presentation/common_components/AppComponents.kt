@@ -65,6 +65,23 @@ fun NormalTextComponent(value: String) {
 }
 
 @Composable
+fun ErrorTextComponent(value: String) {
+    Text(
+        text = value,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 20.dp),
+        style = TextStyle(
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal
+        ),
+        color = colorResource(id = android.R.color.holo_red_dark),
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
 fun HeadingTextComponent(value: String) {
     Text(
         text = value,
@@ -303,5 +320,11 @@ fun ButtonComponent(value: String, onClick: (() -> Unit)? = null) {
 @Preview
 fun NormalPreivew() {
     NormalTextComponent(value = "Hello World")
+}
+
+@Composable
+@Preview
+fun ErrorTextComponentPreview() {
+    ErrorTextComponent("Error Component")
 }
 

@@ -3,11 +3,26 @@ package com.movieapppoc.signup.presentation
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.movieapppoc.signup.domain.SignUpEvent
+import com.movieapppoc.signup.domain.SignUpUIState
+import com.movieapppoc.signup.domain.UIEvent
 import com.movieapppoc.signup.domain.Validator
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class SignUpViewModel : ViewModel() {
 
+    private val TAG = SignUpViewModel::class.java.name
+
     val signUpUIState = mutableStateOf(SignUpUIState())
+
+    var loadingProgressState = mutableStateOf(false)
+
+    val signUpEvent = MutableSharedFlow<SignUpEvent>()
 
 
     fun onEvent(event: UIEvent) {
@@ -73,11 +88,38 @@ class SignUpViewModel : ViewModel() {
             signUpUIState.value.password
         )
 
-        if(fNameResult && lNameResult && emailResult && passwordResult) {
+        if (fNameResult && lNameResult && emailResult && passwordResult) {
             // process sign operation
             println("xxx show error")
         } else {
             println("xxx process sign in operation")
+            createUserInFirebase(
+                signUpUIState.value.email,
+                signUpUIState.value.password
+            )
         }
+    }
+
+    private fun createUserInFirebase(email: String, password: String) {
+        loadingProgressState.value = true
+        FirebaseAuth.getInstance()
+            .createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                loadingProgressState.value = false
+                if (it.isSuccessful) {
+                    Log.d(TAG, "on complete call")
+                    viewModelScope.launch {
+                        signUpEvent.emit(SignUpEvent.Success)
+                    }
+
+                }
+            }
+            .addOnFailureListener {
+                loadingProgressState.value = false
+                Log.d(TAG, "on fail call")
+                signUpUIState.value = signUpUIState.value.copy(
+                    signUpError = it.localizedMessage?.toString() ?: ""
+                )
+            }
     }
 }

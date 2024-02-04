@@ -1,4 +1,4 @@
-package com.movieapppoc.signup.presentation
+package com.movieapppoc.signup.domain
 
 sealed class UIEvent {
 
@@ -9,3 +9,8 @@ sealed class UIEvent {
 
     data object RegisterButtonClicked : UIEvent()
 }
+
+sealed class SignUpEvent() {
+    data object Success : SignUpEvent()
+}
+

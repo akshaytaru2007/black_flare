@@ -50,14 +50,7 @@ fun AccountScreen() {
                     })
                 }
                 composable(Screen.SignUp.rout) {
-                    SignUpScreen(navigateTnC = {
-                        navController.navigate(Screen.TermsAndCondition.rout)
-                    }, navigateToSignIn = {
-                        navController.navigate(Screen.SignIn.rout) {
-                            popUpTo(navController.graph.id)
-                        }
-
-                    })
+                    SignUpScreen(navController = navController)
                 }
             }
         }

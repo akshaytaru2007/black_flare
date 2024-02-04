@@ -16,14 +16,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.movieapppoc.movielist.util.Screen
 import com.movieapppoc.ui.theme.MovieAppPOCTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Firebase Auth
+        auth = Firebase.auth
+
         setContent {
             MovieAppPOCTheme {
                 SetBarColor(color = MaterialTheme.colorScheme.inverseOnSurface)
@@ -56,6 +66,14 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+        }
     }
 }
 

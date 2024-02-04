@@ -4,4 +4,17 @@
     <string name="upcoming">Upcoming</string>
     <string name="popular_movies">Popular Movies</string>
     <string name="upcoming_movies">Upcoming Movies</string>
+    <string name="account">Account icon</string>
+    <string name="hello">Hello There,</string>
+    <string name="create_an_account">Create an Account</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="terms_and_condition">By continuing you accept our Privacy Policy and Terms of use</string>
+    <string name="terms_and_condition_header">Terms And Condition</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="login_screen_signup_initial">"Don't have account "</string>
+    <string name="login_screen_sign_up">Sign Up</string>
 </resources>

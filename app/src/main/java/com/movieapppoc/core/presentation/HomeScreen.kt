@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Upcoming
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -33,6 +35,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.movieapppoc.R
+import com.movieapppoc.core.presentation.common_components.MenuAction
 import com.movieapppoc.movielist.presentation.MovieListUIEvents
 import com.movieapppoc.movielist.presentation.MovieListViewModel
 import com.movieapppoc.movielist.presentation.PopularMovieScreen
@@ -55,6 +58,7 @@ fun HomeScreen(navHostController: NavHostController) {
         },
         topBar = {
             TopAppBar(
+
                 title = {
                     Text(
                         text = if (movieListState.isCurrentPopularScreen)
@@ -67,7 +71,18 @@ fun HomeScreen(navHostController: NavHostController) {
                 modifier = Modifier.shadow(2.dp),
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     MaterialTheme.colorScheme.inverseOnSurface
-                )
+                ),
+                actions = {
+                    IconButton(onClick = {
+                        navHostController.navigate(Screen.Account.rout)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "Account"
+                        )
+                    }
+                }
+
             )
         }
     ) {

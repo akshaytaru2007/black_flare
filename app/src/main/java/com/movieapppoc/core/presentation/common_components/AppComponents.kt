@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,6 +45,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.movieapppoc.R
@@ -53,9 +57,12 @@ fun NormalTextComponent(value: String) {
         text = value,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 40.dp),
+            .heightIn(min = dimensionResource(id = R.dimen.inputfield_height_min)),
         style = TextStyle(
-            fontSize = 24.sp,
+            fontSize = TextUnit(
+                integerResource(id = R.integer.inputfield_text_size).toFloat(),
+                TextUnitType.Sp
+            ),
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal
         ),
@@ -102,21 +109,21 @@ fun HeadingTextComponent(value: String) {
 @Composable
 fun AppTextField(
     labelValue: String,
+    textValue: String,
     imageVector: ImageVector,
     onTextChange: (String) -> Unit,
     isError: Boolean = false
 ) {
-    val textValue = remember {
-        mutableStateOf("")
-    }
+//    val textValue = remember {
+//        mutableStateOf("")
+//    }
 
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(4.dp)),
-        value = textValue.value,
+        value = textValue,
         onValueChange = { txt: String ->
-            textValue.value = txt
             onTextChange(txt)
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(

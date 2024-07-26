@@ -10,15 +10,17 @@ import com.movieapppoc.signup.domain.SignUpUIState
 import com.movieapppoc.signup.domain.UIEvent
 import com.movieapppoc.signup.domain.Validator
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SignUpViewModel : ViewModel() {
 
     private val TAG = SignUpViewModel::class.java.name
 
-    val signUpUIState = mutableStateOf(SignUpUIState())
+    // difference with compose state and StateFlow https://www.youtube.com/watch?v=T8vApYJlW8o
+    // Recommended to use stateflow as it is useful to use same viewmodel in some other NonComposable classes
+    var signUpUIState = mutableStateOf(SignUpUIState())
+        private set
+
 
     var loadingProgressState = mutableStateOf(false)
 
@@ -89,9 +91,9 @@ class SignUpViewModel : ViewModel() {
         )
 
         if (fNameResult && lNameResult && emailResult && passwordResult) {
-            // process sign operation
             println("xxx show error")
         } else {
+            // process sign operation
             println("xxx process sign in operation")
             createUserInFirebase(
                 signUpUIState.value.email,

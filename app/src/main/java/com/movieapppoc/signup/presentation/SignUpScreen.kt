@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,8 @@ fun SignUpScreen(
 
     val context = LocalContext.current
 
+    val uiState = signUpViewModel.signUpUIState
+
     LaunchedEffect(Unit) {
         signUpViewModel.signUpEvent.collectLatest {
             when (it) {
@@ -64,7 +67,9 @@ fun SignUpScreen(
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    navController?.popBackStack()
+                    navController?.navigate(Screen.SignIn.rout) {
+                        popUpTo(navController.graph.id)
+                    }
                 }
             }
         }
@@ -86,19 +91,20 @@ fun SignUpScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(28.dp)
+                    .padding(dimensionResource(id = R.dimen.signup_screen_padding))
             ) {
 
                 NormalTextComponent(value = stringResource(R.string.hello))
                 HeadingTextComponent(value = stringResource(R.string.create_an_account))
 
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.signup_spacer_top)))
 
                 AppTextField(
                     labelValue = stringResource(R.string.first_name),
                     imageVector = Icons.Filled.Face,
-                    isError = signUpViewModel?.signUpUIState?.value?.fNameError ?: false,
+                    isError = signUpViewModel.signUpUIState.value.fNameError ?: false,
+                    textValue = uiState.value.firstName,
                     onTextChange = {
                         signUpViewModel.onEvent(UIEvent.FirstNameChanged(it))
                     }
@@ -107,6 +113,7 @@ fun SignUpScreen(
                     labelValue = stringResource(R.string.last_name),
                     imageVector = Icons.Filled.Face,
                     isError = signUpViewModel.signUpUIState.value.lNameError,
+                    textValue = uiState.value.lastName,
                     onTextChange = {
                         signUpViewModel.onEvent(UIEvent.LastNameChanged(it))
                     }
@@ -115,6 +122,7 @@ fun SignUpScreen(
                     labelValue = stringResource(R.string.email),
                     imageVector = Icons.Filled.Email,
                     isError = signUpViewModel.signUpUIState.value.emailError,
+                    textValue = uiState.value.email,
                     onTextChange = {
                         signUpViewModel.onEvent(UIEvent.EmailChanged(it))
                     }

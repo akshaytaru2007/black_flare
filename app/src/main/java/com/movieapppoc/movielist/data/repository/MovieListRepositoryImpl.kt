@@ -1,6 +1,7 @@
 package com.movieapppoc.movielist.data.repository
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import com.movieapppoc.movielist.data.local.MovieLocalDataSource
 import com.movieapppoc.movielist.data.mappers.toMovie
@@ -12,8 +13,10 @@ import com.movieapppoc.movielist.util.Resource
 import com.movieapppoc.movielist.util.exceptions.ClientErrorException
 import com.movieapppoc.movielist.util.exceptions.ServerErrorException
 import com.movieapppoc.movielist.util.network.ConnectivityProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class MovieListRepositoryImpl @Inject constructor(
@@ -27,6 +30,7 @@ class MovieListRepositoryImpl @Inject constructor(
         page: Int
     ): Flow<Resource<List<Movie>>> {
         return flow {
+            Log.d("MovieListRepository", "threadName: ${Thread.currentThread().name}")
             emit(Resource.Loading(true))
             val localMovieList = movieLocalDataSource.getMovieByCategory(category)
             val shouldLoadLocalMovies = !connectivityProvider.isConnected()
@@ -58,11 +62,12 @@ class MovieListRepositoryImpl @Inject constructor(
                 movieEntities.map { it.toMovie(category) }
             ))
             emit(Resource.Loading(false))
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     override suspend fun getMovie(id: Int): Flow<Resource<Movie>> {
         return flow {
+            Log.d("MovieListRepository", "threadName: ${Thread.currentThread().name}")
             emit(Resource.Loading(true))
             val movieEntity = movieLocalDataSource.getMovieById(id)
             if (movieEntity != null) {
@@ -74,6 +79,6 @@ class MovieListRepositoryImpl @Inject constructor(
 
             emit(Resource.Loading(false))
             return@flow
-        }
+        }.flowOn(Dispatchers.IO)
     }
 }

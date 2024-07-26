@@ -19,7 +19,7 @@ import com.movieapppoc.movielist.util.Category
 @Composable
 fun PopularMovieScreen(
     movieListState: MovieListState,
-    navHostController: NavHostController,
+    onMovieItemClick: (movieId: Int) -> Unit,
     onEvent: (MovieListUIEvents) -> Unit
 ) {
     if (movieListState.popularMovieList.isEmpty()) {
@@ -38,7 +38,7 @@ fun PopularMovieScreen(
             items(movieListState.popularMovieList.size) { index ->
                 MovieItem(
                     movie = movieListState.popularMovieList[index],
-                    navHostController = navHostController
+                    onMovieItemClick = onMovieItemClick
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 

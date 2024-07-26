@@ -44,7 +44,10 @@ import com.movieapppoc.movielist.util.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navHostController: NavHostController) {
+fun HomeScreen(
+    onProfileIconClick : () -> Unit,
+    onMovieItemClick: (movieId: Int) -> Unit
+) {
     val movieListViewModel = hiltViewModel<MovieListViewModel>()
     val movieListState = movieListViewModel.movieListState.collectAsState().value
     val bottomNavController = rememberNavController()
@@ -74,7 +77,8 @@ fun HomeScreen(navHostController: NavHostController) {
                 ),
                 actions = {
                     IconButton(onClick = {
-                        navHostController.navigate(Screen.Account.rout)
+                        onProfileIconClick.invoke()
+
                     }) {
                         Icon(
                             imageVector = Icons.Filled.AccountCircle,
@@ -98,14 +102,14 @@ fun HomeScreen(navHostController: NavHostController) {
                 composable(Screen.PopularMovieList.rout) {
                     PopularMovieScreen(
                         movieListState = movieListState,
-                        navHostController = navHostController,
+                        onMovieItemClick = onMovieItemClick,
                         onEvent = movieListViewModel::onEvent
                     )
                 }
                 composable(Screen.UpcomingMovieList.rout) {
                     UpcomingMovieScreen(
                         movieListState = movieListState,
-                        navHostController = navHostController,
+                        onMovieItemClick = onMovieItemClick,
                         onEvent = movieListViewModel::onEvent
                     )
                 }

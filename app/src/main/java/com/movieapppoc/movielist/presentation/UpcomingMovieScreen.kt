@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.movieapppoc.movielist.presentation.components.MovieItem
@@ -19,7 +20,7 @@ import com.movieapppoc.movielist.util.Category
 @Composable
 fun UpcomingMovieScreen(
     movieListState: MovieListState,
-    navHostController: NavHostController,
+    onMovieItemClick: (movieId: Int) -> Unit,
     onEvent: (MovieListUIEvents) -> Unit
 ) {
     if (movieListState.upcomingMovieList.isEmpty()) {
@@ -38,7 +39,7 @@ fun UpcomingMovieScreen(
             items(movieListState.upcomingMovieList.size) { index ->
                 MovieItem(
                     movie = movieListState.upcomingMovieList[index],
-                    navHostController = navHostController
+                    onMovieItemClick = onMovieItemClick
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -49,4 +50,10 @@ fun UpcomingMovieScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun previewUpcoming() {
+//    UpcomingMovieScreen()
 }

@@ -10,11 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -48,18 +47,27 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.Home.rout
                     ) {
 
-                        composable(Screen.Account.rout) {
+                        composable(
+                            Screen.Account.rout,
+                            deepLinks = Screen.Account.deepLink
+                        ) {
                             AccountScreen()
                         }
 
                         composable(Screen.Home.rout) {
-                            HomeScreen(navController)
+                            HomeScreen(onProfileIconClick = {
+                                navController.navigate(Screen.Account.rout)
+                            }, onMovieItemClick = {
+                                navController.navigate(Screen.Details.rout + "/${it}")
+                            })
                         }
-                        composable(Screen.Details.rout + "/{movieId}",
-                            arguments = listOf(
-                                navArgument("movieId") { type = NavType.IntType }
-                            )
+                        composable(
+                            Screen.Details.routeWithArgs,
+                            arguments = Screen.Details.argument,
+                            deepLinks = Screen.Details.deepLink
                         ) { backStackEntry ->
+                            val movieId =
+                                backStackEntry.arguments?.getString(Screen.Details.movieIdArg)
                         }
                     }
                 }

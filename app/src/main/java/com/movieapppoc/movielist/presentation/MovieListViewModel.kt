@@ -1,5 +1,6 @@
 package com.movieapppoc.movielist.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.movieapppoc.movielist.domain.repository.MovieListRepository
@@ -9,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,21 +50,22 @@ class MovieListViewModel @Inject constructor(
 
     private fun getPopularMovieList() {
         viewModelScope.launch {
-            _movieListState.update {
-                it.copy(isLoading = true)
-            }
+
 
             movieListRepository.getMovieList(
                 Category.POPULAR,
                 movieListState.value.popularMovieListPage
-            ).collectLatest { result ->
+            ).onStart {
+                _movieListState.update {
+                    it.copy(isLoading = true)
+                }
+            }.collectLatest { result ->
                 when (result) {
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(isLoading = false)
                         }
                     }
-
                     is Resource.Success -> {
                         result.data?.let { popularList ->
                             _movieListState.update {
@@ -90,7 +93,6 @@ class MovieListViewModel @Inject constructor(
             _movieListState.update {
                 it.copy(isLoading = true)
             }
-
             movieListRepository.getMovieList(
                 Category.UPCOMING,
                 movieListState.value.upcomingMovieListPage

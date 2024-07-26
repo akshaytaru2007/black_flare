@@ -52,7 +52,7 @@ import com.movieapppoc.movielist.util.getAverageColor
 @Composable
 fun MovieItem(
     movie: Movie,
-    navHostController: NavHostController
+    onMovieItemClick : (movieId: Int) -> Unit
 ) {
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -81,7 +81,7 @@ fun MovieItem(
                 )
             )
             .clickable {
-                navHostController.navigate(Screen.Details.rout + "/${movie.id}")
+                movie.id?.let { onMovieItemClick(it) }
             }
 
 

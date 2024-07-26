@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="signup_screen_padding">28dp</dimen>
+    <dimen name="signup_spacer_top">20dp</dimen>
+    <dimen name="inputfield_height_min">40dp</dimen>
+    <dimen name="inputfield_text_size">14sp</dimen>
+</resources>

@@ -45,6 +45,7 @@ fun SignInScreen(
         AppTextField(
             labelValue = stringResource(R.string.email),
             imageVector = Icons.Filled.Email,
+            textValue = "",
             onTextChange = {
 
             }
